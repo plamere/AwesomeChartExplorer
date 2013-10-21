@@ -1,0 +1,772 @@
+<DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <script src="js/pace.min.js"></script>
+    <link href="themes/pace-theme-big-counter.css" rel="stylesheet" />
+    <script src="js/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="chart_details.js"></script>
+
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css" rel="stylesheet">
+    <script src="https://rdio.com/api/api.js?client_id=EVPKsSK6fFt0j9JWILevLg"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> 
+    <!--<link href="//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css" rel="stylesheet">-->
+    <link href="styles.css" rel="stylesheet">
+    <script src="rdio.js?v2" type="text/javascript"></script>
+
+</head>
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">The Awesome Chart Explorer</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="about.html">About</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+ <!-- Main component for a primary marketing message or call to action -->
+<div class="container">
+  <div id='intro' class="jumbotron">
+    <h1> The Awesome Chart Explorer</h1>
+    <p>The Awesome Chart Explorer lets you explore over 50 years of Billboard Charts. View how
+       songs move up and down on the charts. Filter the charts based on genre or acoustic 
+       attributes such as energy, danceability and loudness. Listen to the charts.
+    <p>
+      <button id="explore" class="btn btn-lg btn-primary"> Start Exploring The Charts </button>
+    </p>
+  </div>
+</div>
+
+<div class="container">
+        <div id="top-stuff" class="row">
+            <div class="col-md-6" id="now-playing">
+                <div id="album-art" class="pull-left">
+                    <div>
+                        <img height="200px" 
+                            id='rp-album-art' src='http://rdio-c.cdn3.rdio.com/album/2/d/9/00000000003199d2/2/square-200.jpg'>
+                    </div>
+                    <div id='play-buttons' class='btn-group'>
+                        <button id="rp-prev" class="btn btn-primary"><i class="glyphicon glyphicon-step-backward"></i></button>
+                        <button id="rp-pause-play" class="btn btn-primary"><i class="glyphicon glyphicon-pause"></i></button>
+                        <button id="rp-next" class="btn btn-primary"><i class="glyphicon glyphicon-step-forward"></i></button>
+                    </div>
+                </div>
+                <div id="song-info">
+                    <span id="rp-title"> Blurred Lines</span> <br>
+                    <span id="rp-artist"> Robin Thick </span> <br>
+                    <div id="song-description"> Welcome to <b> The Awesome Chart Explorer</b> </div>
+                    <div id="song-genres"> rock, pop</b> </div>
+                </div>
+            </div>
+            <div id='rhs' class="col-md-offset-0 col-md-6">
+                <h2> Filters! </h2>
+                <div id='buttons2' class="btn-group" data-toggle="buttons">
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='all-songs'>  All </button>
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='high-energy'>  Hi Energy</button>
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='chill'> Chill </button>
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='high-dance'> Dance</button>
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='loud'> Loud</button>
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='soft'> Soft</button>
+                    <button type="radio" name="filter" data-toggle="button" class="btn btn-primary" id='live'> Live</button>
+                </div>
+                <div id="tgenres"> 
+                    <h4> Genres </h4>
+                    <div id="genres"> genres </div>
+                </div>
+            </div>
+        </div>
+        <div id="next-stuff" class="row">
+        <div class="row" >
+                <div class="pull-left" id='left-buttons'>
+                    <span class='btn-group'>
+                        <button type="button" class="btn btn-lg glyphicon glyphicon-circle-arrow-up" id='prev-song'> </button>
+                        <button type="button" class="btn btn-lg glyphicon glyphicon-circle-arrow-down" id='fwd-song'></button>
+                    </span>
+
+                    <span class='btn-group'>
+                        <button type="button" class="btn btn-lg glyphicon glyphicon-chevron-left" id='prev-big'> </button>
+                        <button type="button" class="btn btn-lg glyphicon glyphicon-circle-arrow-left" id='prev'> </button>
+                        <button type="button" class="btn btn-lg glyphicon glyphicon-circle-arrow-right" id='fwd'></button>
+                        <button type="button" class="btn btn-lg glyphicon glyphicon-chevron-right" id='fwd-big'></button>
+                    </span>
+
+                <span id='fancy-play'>
+                    <button title="Play all songs"
+                        type="button" class="btn btn-lg btn-success glyphicon glyphicon-play" id='play-visible'> All</button>
+                    <button title="Play visible filtered songs" 
+                        type="button" class="btn btn-lg btn-success glyphicon glyphicon-play" id='play-selected'> Filtered</button>
+                </span>
+                </div>
+            </div>
+        </div>
+        <div class="row col-md-12" id="the-canvas"> </div>
+        </div>
+    </div>
+</div>
+
+<!--
+<div id="footer" class="navbar-fixed-bottom">
+    <div id="footer-body">
+        Build by <a href="http://twitter.com/plamere">Paul Lamere</a> 
+        at <a href="http://chicago.musichackday.org">Music Hack Day Chicago</a>. 
+        Powered by <a href="http://rdio.com">Rdio</a> and <a href="http://the.echonest.com">The Echo Nest</a>. 
+        Read more at <a href="http://musicmachinery.com">Music Machinery</a>
+    </div>
+</div>
+-->
+
+<script>
+
+var width = 1200;
+var height = 800;
+
+var numCharts = 10;
+var maxCharts = 50;
+var minCharts = 5;
+var numSongs = 15;
+var maxSongs = 100;
+var minSongs = 5;
+var animating = true;
+
+var xMargin = 50;
+var yMargin = 50;
+var dwidth  = width - xMargin * 2
+var dheight  = height - yMargin * 2
+var songSpacing = dheight / numSongs;
+var chartSpacing = dwidth / numCharts;
+
+var paper;
+var allCellsSet = null;
+var visibleSongs = [];
+var visibleSelectedSongs = [];
+var nowPlayingSong = null;
+
+
+function now() {
+    return new Date().getTime();
+}
+
+function selectAllSongs() {
+    _.each(charts.songs, function(song) {
+        song.selected = true;
+    });
+}
+
+function selectSongsByAudioAttribute(name, low, high) {
+    _.each(charts.songs, function(song) {
+        song.selected = false;
+        if ('audio_summary' in song && name in song.audio_summary) {
+            var val = song.audio_summary[name];
+            song.selected = val >= low && val <= high;
+        }
+    });
+}
+
+function selectSongsByGenre(genre) {
+    _.each(charts.songs, function(song) {
+        song.selected = song.genres.indexOf(genre) != -1; 
+    });
+}
+
+function drawCharts(startChart, startSong) {
+    var deselectedColor = Raphael.color("#ddd");
+    var cells = [];
+
+    var tsStart = now();
+    var lastIndex = [];
+    var lastY = 0;
+
+
+   $("#the-canvas a").qtip("hide");
+    paper.clear();
+
+    visibleSongs = [];
+    visibleSelectedSongs = [];
+
+
+    for (var line = startSong; line < numSongs + startSong; line++) {
+        var y = (line - startSong) * songSpacing + yMargin;
+        paper.text(20, y, line + 1).attr( {"font-size":16});
+    }
+
+    allCellsSet = paper.set();
+    for (var i = startChart; i < startChart + numCharts && i < charts.charts.length; i++) {
+        var whichChart = i - startChart;
+        var chart = charts.charts[i];
+        var x = whichChart * chartSpacing + xMargin;
+        
+        paper.text(x, 20, chart.year).attr({'font-size':16});
+        _.each(chart.songs, function(sid, whichSong) {
+            if (whichSong >= startSong && whichSong < numSongs + startSong) {
+                var song = charts.songs[sid];
+                if (sid != null) {
+                    var radius = song === nowPlayingSong ? 10 : 'rdio' in song ? 8 : 6;
+                    var y = (whichSong - startSong) * songSpacing + yMargin;
+                    var color = song.selected ? song.color : deselectedColor;
+                    var title =  song.title + ' by ' + song.artist + " was #" + (whichSong + 1) + " on " + chart.year;
+
+                    var cell;
+
+                    if (song === nowPlayingSong) {
+                        cell = paper.circle(x, y, radius).attr({stroke:"#f00", "stroke-width":3, strokefill: color, fill:color});
+                    } else {
+                        cell = paper.circle(x, y, radius).attr({stroke:"none", fill: color});
+                    }
+                    cell.song = song;
+                    if (song.selected) {
+                        visibleSelectedSongs.push(song);
+                    }
+                    visibleSongs.push(song);
+                    //jcell.attr( {title: song.title + ' by ' + song.artist } );
+                    cell.attr( {title: title } );
+                    cell.whichChart = i;
+                    cell.whichSong = sid;
+                    cells.push(cell);
+                    allCellsSet.push(cell);
+                    
+                    cell.hover(
+                        function() {
+                            cell.glowStuff = cell.glow({
+                                width:20,
+                                fill:true,
+                            });
+                        },
+                        function() {
+                            cell.glowStuff.remove();
+                            cell.glowStuff = null;
+                        }
+                    );
+
+                    cell.click(function() {
+                        rdio.playSong(cell.song);
+                    });
+
+
+                    if (sid in lastIndex) {
+                        var lastSong = lastIndex[sid];
+                        if (lastSong >= curSong) {
+                            var lastY = (lastSong - curSong) * songSpacing + yMargin;
+                            var width = 'rdio' in song ? 4 : 2;
+                            var line = drawLine(x - radius, y, lastX + radius, lastY, color, width);
+                            if (!song.selected) {
+                                line.toBack();
+                            } else {
+                                line.toFront();
+                            }
+                            allCellsSet.push(line);
+                        }
+                        // draw line to prev
+                    }
+                } else {
+                }
+            }
+        });
+
+        lastIndex = [];
+        _.each(chart.songs, function(sid, whichSong) {
+            lastIndex[sid] = whichSong;
+        });
+
+        _.each(cells, function(cell) {
+            cell.toFront();
+        });
+
+        lastX = x;
+    }
+    visibleSongs = uniqueSongs(visibleSongs);
+    visibleSelectedSongs = uniqueSongs(visibleSelectedSongs);
+    showTopGenres(visibleSongs);
+    console.log("drawchart in", now() - tsStart, 'ms');
+}
+
+function drawLine(tx, ty, lx, ly, color, width) {
+    var cx = (tx + lx) / 2;
+    var cy = (ty + ly) / 2;
+    var line = paper.path( ["M", tx, ty, "C", tx - 65, ty, lx + 65, ly, lx, ly ] );
+    line.attr("stroke", color);
+    line.attr("stroke-width", width);
+    return line;
+}
+
+
+function conditionChartData() {
+    var chartList = [];
+    _.each(charts.charts, function(songs, year) {
+        chart = {
+            which: 0,
+            year: year,
+            songs: songs
+        }
+        chartList.push(chart);
+    });
+    chartList.sort(function(a,b) {
+        return a.year.localeCompare(b.year);
+    });
+
+    _.each(chartList, function(chart, index) {
+        chart.which = index;
+    });
+
+    charts.charts = chartList;
+
+    _.each(charts.songs, function(song, id) {
+        song.sid = id;
+        song.color = getNextColor();
+        song.selected = true;
+        song.description = "This song first entered the charts on " +
+            song.entered + ". It peaked at #" + song.peak_position +  " on "  + song.peak_week + ". "  +
+            "It was on the charts for " + song.weeks_charted +  " weeks. Overall, the song ranked #"  + song.yearly_rank
+            + " for " + song.year + ".";
+    });
+}
+
+var curChart = 2890;
+var curSong = 0;
+
+
+
+var colorCount = 0;
+function getNextColor() {
+    if (colorCount++ > 32) {
+        colorCount = 0;
+        Raphael.getColor.reset();
+    }
+    return Raphael.getColor();
+}
+
+
+function animateAll(xoffset, yoffset, callback) {
+        var time = 100;
+        if (allCellsSet && animating) {
+            var ranimator = Raphael.animation({ transform: "t" + xoffset + "," + yoffset}, time, 'linear');
+            allCellsSet.animate(ranimator);
+            setTimeout(callback, time);
+        } else {
+            callback();
+        }
+}
+
+function forwardChart() {
+    if (curChart + 1 < charts.charts.length - numCharts) {
+        animateAll(-chartSpacing, 0, function() {
+            curChart++;
+            showChart();
+        });
+    }
+}
+
+function backwardChart() {
+    if (curChart - 1 > 0) {
+        animateAll(chartSpacing, 0, function() {
+            curChart--;
+            showChart();
+        });
+    }
+}
+
+function lastChart() {
+    if (curChart != charts.charts.length - numCharts) {
+        animateAll(-chartSpacing * 5, 0, function() {
+            curChart = charts.charts.length - numCharts;
+            showChart();
+        });
+    }
+}
+
+function firstChart() {
+    if (curChart != 0) {
+        animateAll(chartSpacing * 5, 0, function() {
+            curChart = 0;
+            showChart();
+        });
+    }
+}
+
+
+function forwardBig() {
+    if (curChart + 52 < charts.charts.length - numCharts) {
+        animateAll(-chartSpacing * 5, 0, function() {
+            curChart += 52;
+            showChart();
+        });
+    }
+}
+
+function backwardBig() {
+    if (curChart - 52 > 0) {
+        animateAll(chartSpacing * 5, 0, function() {
+            curChart -= 52;
+            showChart();
+        });
+    }
+}
+
+function forwardSong() {
+    if (curSong + 1 < maxSongs - numSongs) {
+        animateAll(0, -songSpacing, function() {
+            curSong++;
+            showChart();
+        });
+    }
+}
+
+function backwardSong() {
+    if (curSong - 1 > 0) {
+        animateAll(0, songSpacing, function() {
+            curSong--;
+            showChart();
+        });
+    }
+}
+
+function firstSong() {
+    if (curSong !=  0) {
+        animateAll(0, songSpacing * 5 , function() {
+            curSong = 0;
+            showChart();
+        });
+    }
+}
+
+function lastSong() {
+    if (curSong !=  maxSongs - numSongs) {
+        animateAll(0, -songSpacing * 5 , function() {
+            curSong = maxSongs - numSongs;
+            showChart();
+        });
+    }
+}
+
+
+function showChart() {
+    if (curChart < 0) {
+       curChart = 0;
+    }
+
+    if (curChart > charts.charts.length - numCharts) {
+       curChart = charts.charts.length - (numCharts + 1);
+    }
+
+    if (curSong > maxSongs - numSongs) {
+        curSong = maxSongs - numSongs;
+    }
+
+    if (curSong < 0) {
+        curSong = 0;
+    }
+
+    drawCharts(curChart, curSong);
+   $("#the-canvas a").qtip( {
+        style: {
+            classes: 'qtip-tipsy'
+        }
+    });
+}
+
+var genreBlacklist = ['hot', 'sexy'];
+
+function uniqueSongs(songs) {
+    var sSongs = {};
+    var uSongs = [];
+
+    _.each(songs, function(song) {
+        if (! (song.sid in sSongs)) {
+            sSongs[song.sid] = song.sid;
+            uSongs.push(song);
+        }
+    });
+    return uSongs;
+}
+
+function topGenres(songs) {
+    var counts = {};
+    var uSongs = uniqueSongs(songs);
+
+    _.each(uSongs, function(song) {
+        if (song) {
+            _.each(song.genres, function(genre) {
+                if (!(genre in counts)) {
+                    counts[genre] = 0;
+                }
+                counts[genre]++;
+            });
+        }
+    });
+
+    var countList = [];
+
+    _.each(counts, function(count, genre) {
+        if (genreBlacklist.indexOf(genre) == -1) {
+            countList.push( [count, genre] );
+        }
+    });
+
+    countList.sort(function(a,b) {
+        return a[0] - b[0];
+    });
+
+    countList.reverse();
+    return countList;
+}
+
+
+function showTopGenres(songs) {
+    var top = topGenres(songs);
+    var genreString = "";
+
+    var glist = $("<ul class='inline-list'>");
+
+    _.each(top, function(gc) {
+        var count = gc[0];
+        var genre = gc[1];
+        var ganchor = $("<a>");
+        if (count > 1) {
+            ganchor.text(genre + '(' + count + ')');
+            ganchor.click(function() {
+                selectSongsByGenre(genre);
+                showChart();
+            });
+
+            var li = $("<li>");
+            li.append(ganchor);
+            glist.append(li);
+        }
+
+    });
+    $("#genres").empty();
+    $("#genres").append(glist);
+}
+
+function moreSongs() {
+    if (numSongs < maxSongs) {
+        numSongs += 5
+        showChart();
+    }
+}
+
+function lessSongs() {
+    if (numSongs > minSongs) {
+        numSongs -= 5
+        showChart();
+    }
+}
+
+function moreCharts() {
+    if (numCharts < maxCharts) {
+        numCharts += 1
+        showChart();
+    }
+}
+
+function lessCharts() {
+    if (numCharts > minCharts) {
+        numCharts -= 1
+        showChart();
+    }
+}
+
+function initKeys() {
+    $(document).keydown(function(evt) {
+        if  (evt.keyCode == 39) { // right arrow
+           if (evt.shiftKey) {
+                lastChart();
+           } else {
+                forwardChart(); 
+           }
+           evt.preventDefault();
+        } else if  (evt.keyCode == 37) { // left arrow
+           if (evt.shiftKey) {
+                firstChart();
+           } else {
+                backwardChart(); 
+           }
+           evt.preventDefault();
+        } else if  (evt.keyCode == 40) { // down arrow
+           if (evt.shiftKey) {
+               lastSong();
+           } else {
+               forwardSong(); 
+           }
+           evt.preventDefault();
+        } else if  (evt.keyCode == 38) { // up arrow
+           if (evt.shiftKey) {
+                firstSong();
+            } else {
+               backwardSong(); 
+            }
+           evt.preventDefault();
+        }
+    });
+}
+
+function initUI() {
+   conditionChartData();
+   paper = Raphael("the-canvas", width- 20, height ); 
+
+
+   initKeys();
+
+
+   $("#all-songs").click(function() {
+        selectAllSongs();
+        showChart();
+   });
+
+   $("#high-energy").click(function() {
+        selectSongsByAudioAttribute('energy', .7, 1);
+        showChart();
+   });
+
+   $("#high-dance").click(function() {
+        selectSongsByAudioAttribute('danceability', .7, 1);
+        showChart();
+   });
+
+   $("#chill").click(function() {
+        selectSongsByAudioAttribute('energy', .0, .3);
+        showChart();
+   });
+
+   $("#loud").click(function() {
+        selectSongsByAudioAttribute('loudness', -7, 5);
+        showChart();
+   });
+   
+   $("#soft").click(function() {
+        selectSongsByAudioAttribute('loudness', -60, -12);
+        showChart();
+   });
+
+   $("#live").click(function() {
+        selectSongsByAudioAttribute('liveness', .8, 1);
+        showChart();
+   });
+
+   $("#fwd").click(function() {
+        forwardChart();
+   });
+
+   $("#prev-song").click(function() {
+        backwardSong();
+   });
+
+   $("#fwd-big-song").click(function() {
+    forwardBigSong();
+   });
+
+   $("#prev-big-song").click(function() {
+        backwardBigSong();
+   });
+
+   $("#fwd-song").click(function() {
+    forwardSong();
+   });
+
+
+   $("#prev").click(function() {
+        backwardChart();
+   });
+
+   $("#fwd-big").click(function() {
+    forwardBig();
+   });
+
+   $("#prev-big").click(function() {
+        backwardBig();
+   });
+
+   $("#more-charts").click(function() {
+        moreCharts();
+   });
+
+   $("#less-charts").click(function() {
+        lessCharts();
+   });
+
+   $("#more-songs").click(function() {
+        moreSongs();
+   });
+
+   $("#less-songs").click(function() {
+        lessSongs();
+   });
+
+   $("#play-visible").click(function() {
+        rdio.playSongs(visibleSongs);
+   });
+
+   $("#play-selected").click(function() {
+        rdio.playSongs(visibleSelectedSongs);
+   });
+
+   $("#rp-next").click(function() {
+        rdio.next();
+   });
+   $("#rp-prev").click(function() {
+        rdio.prev();
+   });
+
+   $("#explore").click(function() {
+        $("#intro").hide(1000);
+   });
+
+
+   rdio.setCallback(function(song) {
+        setNowPlaying(song);
+   });
+   showChart();
+   setNowPlaying(charts.songs[170]);
+}
+
+function setNowPlaying(song) {
+    nowPlayingSong = song;
+    $("#song-description").html(song.description);
+
+    var gstring = song.genres.join(", ");
+    $("#song-genres").text(gstring);
+    showChart();
+}
+
+var rdio = getRdioPlayer(function() {
+}) ;
+
+$(document).ready(function() {
+    initUI();
+});
+
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3675615-27']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type =
+'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
+'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>
